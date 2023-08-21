@@ -1,0 +1,13 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+    openVideoFolder: () => ipcRenderer.send('open-video-folder'),
+    onVideoFolderOpened: (callback) =>
+        ipcRenderer.on('video-folder-opened', callback),
+    changeVideo: (args) => ipcRenderer.send('change-video', args),
+    onVideoChanged: (callback) => ipcRenderer.on('video-changed', callback),
+    dataToClipboard: (args) => ipcRenderer.invoke('data-to-clipboard', args),
+    renameFile: (args) => ipcRenderer.send('rename-file', args),
+    onFileRenamed: (callback) => ipcRenderer.on('file-renamed', callback),
+    openDevTools: () => ipcRenderer.send('open-dev-tools'),
+});

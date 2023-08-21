@@ -1,0 +1,44 @@
+#video-player {
+    min-height: 100vh;
+    margin: 0;
+}
+video {
+    max-height: 100vh;
+}
+.step-text {
+    color: rgb(0, 58, 218);
+    font-size: 1rem;
+    font-weight: 400;
+    margin: auto 0;
+}
+.step-number {
+    color: rgb(0, 58, 218);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: auto 0.25rem auto 0;
+}
+.tool-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+.tool-section {
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 0.4rem;
+}
+.field-label {
+    margin-bottom: 0.3rem;
+}
+input {
+    margin-bottom: 0.3rem;
+}
+#otters-output {
+    min-height: 2rem;
+    width: 100%;
+    padding: 0.4rem;
+}
+td {
+    border: 1px solid gray;
+    padding: 0.3rem;
+}
