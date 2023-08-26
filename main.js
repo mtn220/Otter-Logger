@@ -8,6 +8,15 @@ const videoFileExtensions = ['mp4', 'webm', 'ogg', 'ogv'];
 let videoWindow = null;
 let toolsWindow = null;
 
+function closeAllWindows() {
+    if (videoWindow) {
+        videoWindow.close();
+    }
+    if (toolsWindow) {
+        toolsWindow.close();
+    }
+}
+
 async function handleOpenVideoFolder(event) {
     const webContents = event.sender;
     try {
@@ -125,18 +134,26 @@ const createVideoWindow = () => {
         },
     });
     win.loadFile('video-window.html');
-    return win;
+    win.on('closed', () => {
+        videoWindow = null;
+        closeAllWindows();
+    });
+    videoWindow = win;
 };
 const createToolsWindow = () => {
     const win = new BrowserWindow({
-        width: 1000,
+        width: 810,
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload_tools-window.js'),
         },
     });
     win.loadFile('tools-window.html');
-    return win;
+    win.on('closed', () => {
+        toolsWindow = null;
+        closeAllWindows();
+    });
+    toolsWindow = win;
 };
 
 app.whenReady().then(() => {
@@ -149,13 +166,15 @@ app.whenReady().then(() => {
     });
     ipcMain.handle('data-to-clipboard', handleDataToClipboard);
 
-    videoWindow = createVideoWindow();
-    toolsWindow = createToolsWindow();
+    createVideoWindow();
+    createToolsWindow();
+    const pos = videoWindow.getPosition();
+    toolsWindow.setPosition(pos[0] + 40, pos[1] + 40);
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) {
-            videoWindow = createVideoWindow();
-            toolsWindow = createToolsWindow();
+            createVideoWindow();
+            createToolsWindow();
         }
     });
 });
