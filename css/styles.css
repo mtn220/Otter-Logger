@@ -5,27 +5,26 @@
 video {
     max-height: 100vh;
 }
-.step-text {
-    color: rgb(0, 58, 218);
-    font-size: 1rem;
-    font-weight: 400;
-    margin: auto 0;
-}
-.step-number {
-    color: rgb(0, 58, 218);
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: auto 0.25rem auto 0;
+.alerts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 .tool-row {
+    margin-bottom: 0.5rem;
+}
+.tool-row-flex {
     display: flex;
     flex-direction: row;
     justify-content: start;
+    margin-bottom: 0.5rem;
 }
 .tool-section {
     border: 2px solid black;
     border-radius: 8px;
     padding: 0.4rem;
+    margin: 0.5rem auto;
 }
 .field-label {
     margin-bottom: 0.3rem;

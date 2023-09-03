@@ -31,6 +31,7 @@ async function handleOpenVideoFolder(event) {
                 const extension = file.toLowerCase().split('.').pop();
                 return videoFileExtensions.includes(extension);
             });
+            videos.sort();
 
             webContents.send('video-folder-opened', {
                 folderPath,
@@ -68,7 +69,7 @@ function handleDataToClipboard(event, { toCopy }) {
 
 async function handleRenameFile(
     event,
-    { oldName, newText, type, folderPath, retryCount = 0 }
+    { oldName, newText, type, folderPath, retryCount = 0, ...rest }
 ) {
     try {
         if (retryCount >= 10) {
@@ -88,7 +89,7 @@ async function handleRenameFile(
                 newName = newText + separator + oldName;
                 break;
             case 'replace':
-                newName = newText + extName;
+                newName = newText;
                 break;
             case 'append':
             default:
@@ -102,6 +103,7 @@ async function handleRenameFile(
         toolsWindow.webContents.send('file-renamed', {
             oldName,
             newName,
+            ...rest,
         });
     } catch (err) {
         if (err.code == 'EBUSY') {
@@ -114,6 +116,7 @@ async function handleRenameFile(
                         type,
                         folderPath,
                         retryCount: retryCount + 1,
+                        ...rest,
                     }),
                 500
             );
@@ -132,6 +135,7 @@ const createVideoWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload_video-window.js'),
         },
+        icon: path.join(process.cwd(), 'img', 'icon.ico'),
     });
     win.loadFile('video-window.html');
     win.on('closed', () => {
@@ -147,6 +151,7 @@ const createToolsWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload_tools-window.js'),
         },
+        icon: path.join(process.cwd(), 'img', 'icon.ico'),
     });
     win.loadFile('tools-window.html');
     win.on('closed', () => {
