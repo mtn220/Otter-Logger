@@ -135,7 +135,7 @@ const createVideoWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload_video-window.js'),
         },
-        icon: path.join(process.cwd(), 'img', 'icon.ico'),
+        icon: path.join(process.cwd(), 'assets', 'icon'),
     });
     win.loadFile('video-window.html');
     win.on('closed', () => {
@@ -151,7 +151,7 @@ const createToolsWindow = () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload_tools-window.js'),
         },
-        icon: path.join(process.cwd(), 'img', 'icon.ico'),
+        icon: path.join(process.cwd(), 'assets', 'icon'),
     });
     win.loadFile('tools-window.html');
     win.on('closed', () => {
@@ -185,5 +185,6 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    // if (process.platform !== 'darwin')
+    app.quit();
 });
