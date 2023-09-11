@@ -8,6 +8,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onVideoChanged: (callback) => ipcRenderer.on('video-changed', callback),
     dataToClipboard: (args) => ipcRenderer.invoke('data-to-clipboard', args),
     renameFile: (args) => ipcRenderer.send('rename-file', args),
+    setVideoCSS: (args) => ipcRenderer.send('set-video-css', args),
     onFileRenamed: (callback) => ipcRenderer.on('file-renamed', callback),
-    openDevTools: () => ipcRenderer.send('open-dev-tools'),
 });

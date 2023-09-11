@@ -7,3 +7,7 @@ electronAPI.onChangeVideo((event, { videoPath }) => {
 electronAPI.onClearVideoSrc((event) => {
     videoEl.src = '';
 });
+
+electronAPI.onSetVideoCSS((event, { name, value }) => {
+    videoEl.style[name] = value;
+});

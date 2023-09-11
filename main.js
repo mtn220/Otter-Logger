@@ -58,6 +58,9 @@ async function handleChangeVideo(event, { folderPath, fileName }) {
     }
 }
 
+function handleSetVideoCSS(event, { name, value }) {
+    videoWindow.webContents.send('set-video-css', { name, value });
+}
 function handleDataToClipboard(event, { toCopy }) {
     try {
         clipboard.writeText(toCopy);
@@ -165,10 +168,7 @@ app.whenReady().then(() => {
     ipcMain.on('open-video-folder', handleOpenVideoFolder);
     ipcMain.on('change-video', handleChangeVideo);
     ipcMain.on('rename-file', handleRenameFile);
-    ipcMain.on('open-dev-tools', (event) => {
-        const webContents = event.sender;
-        webContents.openDevTools();
-    });
+    ipcMain.on('set-video-css', handleSetVideoCSS);
     ipcMain.handle('data-to-clipboard', handleDataToClipboard);
 
     createVideoWindow();

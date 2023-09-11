@@ -12,12 +12,18 @@ const inputsObj = {};
 inputsNodeList.forEach((node) => {
     if (node.id) {
         inputsObj[node.id] = node;
-        if (node.id != 'file-name') {
+        if (node.id != 'file-name' && node.type == 'text') {
             node.addEventListener('input', updateData);
         }
     }
 });
 inputsObj['file-name'].addEventListener('input', handleFileNameInput);
+inputsObj['brightness-slider'].addEventListener('input', (event) => {
+    electronAPI.setVideoCSS({
+        name: 'filter',
+        value: `brightness(${event.target.value}%)`,
+    });
+});
 
 const buttonsNodeList = document.querySelectorAll('button');
 const buttonsObj = {};
@@ -47,6 +53,13 @@ buttonsObj['change-file-name-button'].onclick = () => {
     const oldName = videoData[index].fileName;
     const newText = inputsObj['file-name'].value;
     handleRename({ oldName, newText, type: 'replace' });
+};
+buttonsObj['reset-brightness-button'].onclick = () => {
+    inputsObj['brightness-slider'].value = 100;
+    electronAPI.setVideoCSS({
+        name: 'filter',
+        value: 'brightness(100%)',
+    });
 };
 
 function appendAlert(message, type) {
