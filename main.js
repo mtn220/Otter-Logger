@@ -27,11 +27,18 @@ async function handleOpenVideoFolder(event) {
             const folderPath = filePaths[0];
 
             const files = await fs.readdir(folderPath);
-            const videos = files.filter((file) => {
+            const videoNames = files.filter((file) => {
                 const extension = file.toLowerCase().split('.').pop();
                 return videoFileExtensions.includes(extension);
             });
-            videos.sort();
+            videoNames.sort();
+
+            const videos = [];
+
+            for (const videoName of videoNames) {
+                const stats = await fs.stat(path.join(folderPath, videoName));
+                videos.push({ name: videoName, stats });
+            }
 
             webContents.send('video-folder-opened', {
                 folderPath,

@@ -12,7 +12,11 @@ const inputsObj = {};
 inputsNodeList.forEach((node) => {
     if (node.id) {
         inputsObj[node.id] = node;
-        if (node.id != 'file-name' && node.type == 'text') {
+        if (
+            node.id != 'file-name' &&
+            node.id != 'description' &&
+            node.type == 'text'
+        ) {
             node.addEventListener('input', updateData);
         }
     }
@@ -61,6 +65,14 @@ buttonsObj['reset-brightness-button'].onclick = () => {
         value: 'brightness(100%)',
     });
 };
+
+inputsObj['description'].addEventListener('input', (event) => {
+    if (event.target.value) {
+        buttonsObj['append-button'].disabled = false;
+    } else {
+        buttonsObj['append-button'].disabled = true;
+    }
+});
 
 function appendAlert(message, type) {
     const wrapper = document.createElement('div');
@@ -232,6 +244,26 @@ function changeVideo() {
     }
 }
 
+function parseDateAndTime(videoDateObj) {
+    if (videoDateObj) {
+        const year = videoDateObj.getFullYear();
+        const month = (videoDateObj.getMonth() + 1).toString().padStart(2, '0');
+        const day = videoDateObj.getDate().toString().padStart(2, '0');
+        parsedDate = `${year}-${month}-${day}`;
+
+        const hours = videoDateObj.getHours().toString().padStart(2, '0');
+        const minutes = videoDateObj.getMinutes().toString().padStart(2, '0');
+        parsedTime = `${hours}-${minutes}-00`;
+
+        return { date: parsedDate, time: parsedTime };
+    } else {
+        errorAlert(
+            `Error: parseDateAndTime called without DateTime object. Received: ${videoDateObj}`
+        );
+        return null;
+    }
+}
+
 // Set the function as the event handler for when the video folder is opened.
 electronAPI.onVideoFolderOpened(
     async (event, { folderPath, videos, error }) => {
@@ -248,13 +280,35 @@ electronAPI.onVideoFolderOpened(
             const newOptions = [];
             if (videos.length > 0) {
                 videos.forEach((video, i) => {
+                    dateTime = parseDateAndTime(video.stats.mtime);
+                    // Check if the HH-MM of the video time (HH-MM-00) matches the video before it
+                    if (
+                        i > 0 &&
+                        dateTime &&
+                        videoData[i - 1].time.slice(0, -2) ==
+                            dateTime.time.slice(0, -2)
+                    ) {
+                        // Grabs the last 2 characters in the string and converts them to an integer (if possible)
+                        const prevSeconds = Number.parseInt(
+                            videoData[i - 1].time.slice(-2)
+                        );
+                        if (Number.isInteger(prevSeconds)) {
+                            const newSeconds = prevSeconds + 1;
+                            // Convert to string and add leading zero (1 would become '01' for example)
+                            dateTime.time =
+                                dateTime.time.slice(0, -2) +
+                                String(newSeconds).padStart(2, '0');
+                        }
+                    }
                     videoData[i] = {
-                        fileName: video,
+                        fileName: video.name,
+                        date: dateTime?.date,
+                        time: dateTime?.time,
                     };
 
                     let opt = document.createElement('option');
-                    opt.value = video;
-                    opt.innerText = video;
+                    opt.value = video.name;
+                    opt.innerText = video.name;
                     newOptions.push(opt);
                 });
             } else {
@@ -270,23 +324,7 @@ electronAPI.onVideoFolderOpened(
 );
 
 electronAPI.onVideoChanged((event, { videoDateObj }) => {
-    let parsedDate = '';
-    let parsedTime = '';
-
-    if (videoDateObj) {
-        const year = videoDateObj.getFullYear();
-        const month = (videoDateObj.getMonth() + 1).toString().padStart(2, '0');
-        const day = videoDateObj.getDate().toString().padStart(2, '0');
-        parsedDate = `${year}-${month}-${day}`;
-
-        const hours = videoDateObj.getHours().toString().padStart(2, '0');
-        const minutes = videoDateObj.getMinutes().toString().padStart(2, '0');
-        parsedTime = `${hours}-${minutes}-00`;
-    }
-
     const index = videoSelector.selectedIndex;
-    videoData[index].date = videoData[index].date || parsedDate;
-    videoData[index].time = videoData[index].time || parsedTime;
 
     inputsObj['date'].value = videoData[index].date;
     inputsObj['time'].value = videoData[index].time;
