@@ -126,11 +126,51 @@
                         <label for="behavior" class="tool-row field-label">
                             Behavior
                         </label>
-                        <input
-                            type="text"
-                            class="form-control field"
-                            id="behavior"
-                        />
+                    </div>
+                    <div class="tool-row-flex justify-content-center">
+                        <div class="flex-grow-1">
+                            <input
+                                type="text"
+                                class="form-control field"
+                                id="behavior"
+                            />
+                        </div>
+                        <div
+                            class="append-container"
+                            id="behavior-append-container"
+                        >
+                            <div
+                                class="append-text"
+                                id="behavior-vocalizations-append"
+                            >
+                                Vocalizations
+                            </div>
+                            <div class="append-text" id="behavior-prey-append">
+                                Prey Species
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tool-row-flex mt-2">
+                        <div class="form-check me-3">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="vocalizations"
+                            />
+                            <label class="form-check-label" for="vocalizations">
+                                Vocalizations
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="prey"
+                            />
+                            <label class="form-check-label" for="prey">
+                                Prey Species
+                            </label>
+                        </div>
                     </div>
                     <div class="tool-row">
                         <label for="note" class="tool-row field-label">
@@ -146,9 +186,15 @@
                         <div class="fw-bold">Excel Row Data:</div>
                         <div id="output"></div>
                     </div>
-                    <button class="btn btn-primary my-2" id="copy-data-button">
-                        Copy Excel Row To Clipboard
-                    </button>
+                    <div class="tool-row-flex align-items-center">
+                        <button
+                            class="btn btn-primary my-2"
+                            id="copy-data-button"
+                        >
+                            Copy Excel Row To Clipboard
+                        </button>
+                        <div class="ms-3" id="paste-instructions"></div>
+                    </div>
                 </div>
                 <div class="tool-section">
                     <div class="row">
@@ -173,13 +219,32 @@
                                     id="description"
                                 />
                             </div>
-                            <button
-                                class="btn btn-primary"
-                                id="append-button"
-                                disabled
-                            >
-                                Append To Filename
-                            </button>
+                            <div class="tool-row-flex">
+                                <button
+                                    class="btn btn-primary"
+                                    id="append-button"
+                                    disabled
+                                >
+                                    Append To Filename
+                                </button>
+                                <div
+                                    class="append-container"
+                                    id="description-append-container"
+                                >
+                                    <div
+                                        class="append-text"
+                                        id="description-vocalizations-append"
+                                    >
+                                        Vocalizations
+                                    </div>
+                                    <div
+                                        class="append-text"
+                                        id="description-prey-append"
+                                    >
+                                        Prey Species
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm">
                             <label for="file-name" class="tool-row field-label">

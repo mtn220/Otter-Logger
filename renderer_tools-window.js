@@ -1,11 +1,24 @@
 let videoFolderPath = null;
 let videoData = [];
+const platform = electronAPI.getPlatform();
 
 const folderTextDiv = document.querySelector('#folder-text-field');
 const outputDiv = document.querySelector('#output');
 const alertsContainer = document.querySelector('#alerts-container');
 const videoSelector = document.querySelector('#video-selector');
 videoSelector.addEventListener('change', changeVideo);
+const pasteInstructions = document.querySelector('#paste-instructions');
+pasteInstructions.innerHTML = `<i>Paste With ${
+    platform == 'darwin' ? 'Cmd' : 'Ctrl'
+} + Shift + V</i>`;
+
+const checkFieldLinks = {
+    vocalizations: [
+        'behavior-vocalizations-append',
+        'description-vocalizations-append',
+    ],
+    prey: ['behavior-prey-append', 'description-prey-append'],
+};
 
 const inputsNodeList = document.querySelectorAll('input');
 const inputsObj = {};
@@ -22,6 +35,7 @@ inputsNodeList.forEach((node) => {
     }
 });
 inputsObj['file-name'].addEventListener('input', handleFileNameInput);
+inputsObj['description'].addEventListener('input', handleDescriptionInput);
 inputsObj['brightness-slider'].addEventListener('input', (event) => {
     electronAPI.setVideoCSS({
         name: 'filter',
@@ -46,6 +60,7 @@ buttonsObj['delete-button'].onclick = handleDelete;
 buttonsObj['first-last-button'].onclick = markFirstLast;
 buttonsObj['append-otter-button'].onclick = () => {
     inputsObj['description'].value = 'Otter';
+    handleDescriptionInput();
 };
 buttonsObj['reset-file-name-button'].onclick = () => {
     const index = videoSelector.selectedIndex;
@@ -66,12 +81,31 @@ buttonsObj['reset-brightness-button'].onclick = () => {
     });
 };
 
-inputsObj['description'].addEventListener('input', (event) => {
-    if (event.target.value) {
+function handleDescriptionInput(event) {
+    if (inputsObj['description'].value) {
         buttonsObj['append-button'].disabled = false;
     } else {
         buttonsObj['append-button'].disabled = true;
     }
+}
+
+// For each check box, add an on change event listener.
+Object.keys(checkFieldLinks).forEach((checkId) => {
+    inputsObj[checkId].addEventListener('change', (event) => {
+        // When the check box is changed, display or hide all the divs with the ids in the array for that checkbox
+        const index = videoSelector.selectedIndex;
+        if (index >= 0 && videoData.length > 0) {
+            videoData[index][checkId] = event.target.checked;
+
+            const newDisplay = event.target.checked ? 'block' : 'none';
+            checkFieldLinks[checkId].forEach(
+                (textId) =>
+                    (document.getElementById(textId).style.display = newDisplay)
+            );
+
+            updateOutput();
+        }
+    });
 });
 
 function appendAlert(message, type) {
@@ -102,18 +136,43 @@ function updateData() {
         videoData[index].numPups = inputsObj['num-pups'].value;
         videoData[index].behavior = inputsObj['behavior'].value;
         videoData[index].note = inputsObj['note'].value;
+        videoData[index].prey = inputsObj['prey'].checked;
+        videoData[index].vocalizations = inputsObj['vocalizations'].checked;
+
         updateOutput();
     }
 }
 
+function getBehaviorString() {
+    let behavior = inputsObj['behavior'].value;
+    if (inputsObj['vocalizations'].checked) {
+        behavior = addTrailingComma(behavior) + ' Vocalizations';
+    }
+    if (inputsObj['prey'].checked) {
+        behavior = addTrailingComma(behavior) + ' Prey';
+    }
+    return behavior;
+}
+
 function updateOutput() {
-    let output = '<table><tr>';
-    output += `<td>${inputsObj['date'].value}</td><td>${inputsObj['time'].value}</td>`;
-    output += `<td>${inputsObj['initials'].value}</td><td>${inputsObj['site-code'].value}</td>`;
-    output += `<td>${inputsObj['num-otters'].value}</td><td>${inputsObj['num-adults'].value}</td><td></td>`;
-    output += `<td>${inputsObj['num-pups'].value}</td><td>${inputsObj['behavior'].value}</td>`;
-    output += `<td>${inputsObj['note'].value}</td></tr></table>`;
-    outputDiv.innerHTML = output;
+    const index = videoSelector.selectedIndex;
+    if (index >= 0 && videoData.length > 0) {
+        let output = '<table><tr>';
+        output += `<td>${inputsObj['date'].value}</td><td>${inputsObj['time'].value}</td>`;
+        output += `<td>${inputsObj['initials'].value}</td><td>${inputsObj['site-code'].value}</td>`;
+        output += `<td>${inputsObj['num-otters'].value}</td><td>${inputsObj['num-adults'].value}</td><td></td>`;
+        output += `<td>${
+            inputsObj['num-pups'].value
+        }</td><td>${getBehaviorString()}</td>`;
+        output += `<td>${inputsObj['note'].value}</td></tr></table>`;
+        outputDiv.innerHTML = output;
+    }
+}
+
+function addTrailingComma(str) {
+    if (str.slice(-1) != ',') {
+        return str + ',';
+    }
 }
 
 function handleFileNameInput() {
@@ -145,7 +204,13 @@ function handlePrevVideo() {
 }
 
 function handleAppend() {
-    const newText = inputsObj['description'].value;
+    let newText = inputsObj['description'].value;
+    if (inputsObj['vocalizations'].checked) {
+        newText += '_Vocalizations';
+    }
+    if (inputsObj['prey'].checked) {
+        newText += '_Prey';
+    }
     const oldName = videoSelector.value;
     handleRename({ oldName, newText, type: 'append', changeToNextVideo: true });
 }
@@ -223,12 +288,14 @@ async function dataToClipboard() {
     let toCopy = `${inputsObj['date'].value}\t${inputsObj['time'].value}\t`;
     toCopy += `${inputsObj['initials'].value}\t${inputsObj['site-code'].value}\t`;
     toCopy += `${inputsObj['num-otters'].value}\t${inputsObj['num-adults'].value}\t\t`;
-    toCopy += `${inputsObj['num-pups'].value}\t${inputsObj['behavior'].value}\t`;
+    toCopy += `${inputsObj['num-pups'].value}\t${getBehaviorString()}\t`;
     toCopy += `${inputsObj['note'].value}`;
 
     const { success, error } = await electronAPI.dataToClipboard({ toCopy });
     if (success) {
-        console.log('success');
+        console.log(
+            'Successfully copied to clipboard Todo: Give user feedback here'
+        );
     } else {
         errorAlert(error);
     }
@@ -339,6 +406,9 @@ electronAPI.onVideoChanged((event, { videoDateObj }) => {
     inputsObj['note'].value = videoData[index].note || '';
     inputsObj['description'].value = videoData[index].description || '';
     inputsObj['file-name'].value = videoData[index].fileName;
+    inputsObj['vocalizations'].checked =
+        videoData[index].vocalizations || false;
+    inputsObj['prey'].checked = videoData[index].prey || false;
 
     handleFileNameInput();
     updateOutput();

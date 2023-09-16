@@ -37,10 +37,19 @@ input {
     width: 100%;
     padding: 0.4rem;
 }
+th,
 td {
     border: 1px solid #dee2e6;
     padding: 0.3rem;
+    font-size: small;
 }
+
 #brightness-slider {
     max-width: 300px;
+}
+.append-text {
+    font-size: smaller;
+    margin: auto 0.5rem;
+    display: none;
+    color: #0b5ed7;
 }

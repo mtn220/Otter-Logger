@@ -177,6 +177,7 @@ app.whenReady().then(() => {
     ipcMain.on('rename-file', handleRenameFile);
     ipcMain.on('set-video-css', handleSetVideoCSS);
     ipcMain.handle('data-to-clipboard', handleDataToClipboard);
+    ipcMain.handle('get-platform', (event) => process.platform);
 
     createVideoWindow();
     createToolsWindow();
