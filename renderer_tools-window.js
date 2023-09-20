@@ -1,6 +1,6 @@
 let videoFolderPath = null;
 let videoData = [];
-const platform = electronAPI.getPlatform();
+let platform = null;
 
 const folderTextDiv = document.querySelector('#folder-text-field');
 const outputDiv = document.querySelector('#output');
@@ -8,9 +8,13 @@ const alertsContainer = document.querySelector('#alerts-container');
 const videoSelector = document.querySelector('#video-selector');
 videoSelector.addEventListener('change', changeVideo);
 const pasteInstructions = document.querySelector('#paste-instructions');
-pasteInstructions.innerHTML = `<i>Paste With ${
-    platform == 'darwin' ? 'Cmd' : 'Ctrl'
-} + Shift + V</i>`;
+
+electronAPI.getPlatform().then((response) => {
+    platform = response;
+    pasteInstructions.innerHTML = `<i>Paste With ${
+        platform == 'darwin' ? 'Cmd' : 'Ctrl'
+    } + Shift + V</i>`;
+});
 
 const checkFieldLinks = {
     vocalizations: [
