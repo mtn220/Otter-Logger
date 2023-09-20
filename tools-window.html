@@ -30,13 +30,47 @@
                     </option>
                 </select>
             </div>
-            <div class="tool-row-flex">
-                <button class="btn btn-primary me-4" id="first-last-button">
-                    Mark First & Last
-                </button>
-                <button class="btn btn-danger" id="delete-button">
-                    Mark For Deletion
-                </button>
+            <div class="tool-section">
+                <div class="tool-row">
+                    <button class="btn btn-primary me-1" id="first-last-button">
+                        Mark First & Last
+                    </button>
+                    <button class="btn btn-danger" id="delete-button">
+                        Mark For Deletion
+                    </button>
+                </div>
+                <div class="tool-row">
+                    <div class="tool-row-flex">
+                        <button
+                            class="btn btn-success me-2"
+                            id="prev-video-button"
+                        >
+                            Previous Video
+                        </button>
+                        <button class="btn btn-success" id="next-video-button">
+                            Next Video
+                        </button>
+                    </div>
+                    <div class="tool-row-flex align-items-center">
+                        <label for="brightness-slider" class="form-label me-2"
+                            >Video Brightness</label
+                        >
+                        <button
+                            class="btn btn-success btn-sm"
+                            id="reset-brightness-button"
+                        >
+                            Reset
+                        </button>
+                        <input
+                            type="range"
+                            class="form-range mx-4"
+                            id="brightness-slider"
+                            min="0"
+                            max="600"
+                            value="100"
+                        />
+                    </div>
+                </div>
             </div>
             <div class="tool-row">
                 <div class="tool-section">
@@ -274,35 +308,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                <div class="tool-row-flex">
-                    <button class="btn btn-success me-2" id="prev-video-button">
-                        Previous Video
-                    </button>
-                    <button class="btn btn-success" id="next-video-button">
-                        Next Video
-                    </button>
-                </div>
-                <div class="tool-row-flex align-items-center">
-                    <label for="brightness-slider" class="form-label"
-                        >Video Brightness</label
-                    >
-
-                    <input
-                        type="range"
-                        class="form-range mx-4"
-                        id="brightness-slider"
-                        min="0"
-                        max="400"
-                        value="100"
-                    />
-
-                    <button
-                        class="btn btn-success btn-sm"
-                        id="reset-brightness-button"
-                    >
-                        Reset
-                    </button>
                 </div>
             </div>
         </div>

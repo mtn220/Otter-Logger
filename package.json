@@ -1,5 +1,5 @@
 {
-    "name": "Otter Logger",
+    "name": "OtterLogger",
     "version": "0.1.0",
     "description": "Helper tool for logging River Otter Ecology Project video metadata",
     "main": "main.js",
